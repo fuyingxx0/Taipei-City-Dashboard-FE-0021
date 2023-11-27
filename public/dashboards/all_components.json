@@ -4077,6 +4077,231 @@
 				"https://github.com/tpe-doit/YouBike-Optimization"
 			],
 			"contributors": ["tuic"]
+		},
+		"4000": {
+			"id": 4000,
+			"index": "4000",
+			"map_config": [
+				{
+					"index": "4000",
+					"paint": {
+						"circle-color": [
+							"match",
+							["get", "main_type"],
+							"診所",
+							"#F0B67F",
+							"醫院",
+							"#C7EFCF",
+							"#D6D1B1"
+						],
+						"circle-radius": 3
+					},
+					"property": [
+						{
+							"key": "main_type",
+							"name": "主要類別"
+						},
+						{
+							"key": "name",
+							"name": "名稱"
+						},
+						{
+							"key": "address",
+							"name": "地址"
+						}
+					],
+					"type": "circle",
+					"title": "婦產科診所與醫院"
+				},
+				{
+					"index": "4000",
+					"paint": {
+						"line-color": "#D6D1B1",
+						"line-opacity": 0.6,
+						"line-width": 1.5
+					},
+					"property": [
+						{
+							"key": "main_type",
+							"name": "主要類別"
+						},
+						{
+							"key": "name",
+							"name": "名稱"
+						},
+						{
+							"key": "address",
+							"name": "地址"
+						}
+					],
+					"type": "voronoi",
+					"title": "婦產科診所與醫院"
+				}
+			],
+			"history_data": false,
+			"chart_config": {
+				"categories": [
+					"北投區",
+					"士林區",
+					"內湖區",
+					"南港區",
+					"松山區",
+					"信義區",
+					"中山區",
+					"大同區",
+					"中正區",
+					"萬華區",
+					"大安區",
+					"文山區"
+				],
+				"types": ["ColumnChart"],
+				"color": ["#4dd97a", "#0a85f4"],
+				"unit": "間",
+				"map_filter": [
+					"dist",
+					[
+						"北投區",
+						"士林區",
+						"內湖區",
+						"南港區",
+						"松山區",
+						"信義區",
+						"中山區",
+						"大同區",
+						"中正區",
+						"萬華區",
+						"大安區",
+						"文山區"
+					]
+				]
+			},
+			"name": "婦產科診所與醫院統計",
+			"source": "衛生局",
+			"time_from": "2023-07-26T10:48:26+08:00",
+			"time_to": null,
+			"update_freq": null,
+			"update_freq_unit": null,
+			"short_desc": "",
+			"long_desc": "客製化圖表類型: 月亮圖。此圖顯示各行政區婦產科診所及醫院總和個數，搭配新地圖類型: vonoroi diagram，顯示各地方距離最近的就診地。地圖支援各區篩選功能。為懷孕期使用者設計，不定期更新。",
+			"use_case": "",
+			"links": null,
+			"tags": [],
+			"contributors": ["tuic"]
+		},
+		"4002": {
+			"id": 4002,
+			"index": "4002",
+			"map_config": null,
+			"history_data": false,
+			"chart_config": {
+				"categories": [
+					"北投區",
+					"士林區",
+					"內湖區",
+					"南港區",
+					"松山區",
+					"信義區",
+					"中山區",
+					"大同區",
+					"中正區",
+					"萬華區",
+					"大安區",
+					"文山區"
+				],
+				"types": ["TreeChart"],
+				"color": ["#4dd97a", "#0a85f4"],
+				"unit": ""
+			},
+			"name": "育兒補助",
+			"source": "衛生局",
+			"time_from": "2023-11-18T00:00:00+08:00",
+			"time_to": null,
+			"update_freq": null,
+			"update_freq_unit": null,
+			"short_desc": "",
+			"long_desc": "客製化圖表類型: 樹狀圖。此圖列出台北市提供孕婦及嬰幼兒照護的相關補助措施，以嬰幼兒年齡做層級分類。不定期更新。",
+			"use_case": "",
+			"links": null,
+			"tags": [],
+			"contributors": ["tuic"]
+		},
+		"4006": {
+			"id": 4006,
+			"index": "4006",
+			"map_config": [
+				{
+					"index": "4006",
+					"paint": {
+						"line-color": [
+							"case",
+							["<=", ["get", "value"], 45],
+							"#8AC926",
+							["<=", ["get", "value"], 49],
+							"#A8CA2B",
+							["<=", ["get", "value"], 53],
+							"#C5CA30",
+							["<=", ["get", "value"], 57],
+							"#E2CA35",
+							["<=", ["get", "value"], 61],
+							"#FFCA3A",
+							["<=", ["get", "value"], 65],
+							"#FFBC3F",
+							["<=", ["get", "value"], 69],
+							"#FFAE43",
+							["<=", ["get", "value"], 73],
+							"#FF924C",
+							["<=", ["get", "value"], 77],
+							"#FF7655",
+							"#FF595E"
+						]
+					},
+					"property": [
+						{
+							"key": "value",
+							"name": "推測值"
+						}
+					],
+					"type": "isoline",
+					"title": "空氣品質等值圖"
+				},
+				{
+					"index": "4005",
+					"paint": {
+						"circle-color": "#EEEEEE"
+					},
+					"property": [
+						{
+							"key": "name",
+							"name": "測站名"
+						},
+						{
+							"key": "value",
+							"name": "測量值"
+						}
+					],
+					"type": "circle",
+					"size": "big",
+					"title": "空氣品質等值圖"
+				}
+			],
+			"history_data": false,
+			"chart_config": {
+				"color": ["#FFBC3F"],
+				"types": ["RadarChart", "BarChart"],
+				"unit": "μg/m³"
+			},
+			"name": "臺北市 PM10 測量數據",
+			"source": "環保局",
+			"time_from": "2023-11-18T20:00:00+08:00",
+			"time_to": null,
+			"update_freq": 1,
+			"update_freq_unit": "hour",
+			"short_desc": "",
+			"long_desc": "此圖顯示台北市各測站的一小時內平均PM10濃度。搭配新地圖類型: 等高線圖，顯示懸浮微粒濃度在區域上的分布。為懷孕期使用者及嬰幼兒設計，每小時更新一次。",
+			"use_case": "",
+			"links": null,
+			"tags": [],
+			"contributors": ["tuic"]
 		}
 	}
 }

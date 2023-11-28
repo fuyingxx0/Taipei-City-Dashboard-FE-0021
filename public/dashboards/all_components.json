@@ -4094,7 +4094,17 @@
 							"#C7EFCF",
 							"#D6D1B1"
 						],
-						"circle-radius": 3
+						"circle-radius": [
+							"interpolate",
+							["linear"],
+							["zoom"],
+							12,
+							2,
+							15,
+							5,
+							18,
+							7
+						]
 					},
 					"property": [
 						{
@@ -4140,22 +4150,8 @@
 			],
 			"history_data": false,
 			"chart_config": {
-				"categories": [
-					"北投區",
-					"士林區",
-					"內湖區",
-					"南港區",
-					"松山區",
-					"信義區",
-					"中山區",
-					"大同區",
-					"中正區",
-					"萬華區",
-					"大安區",
-					"文山區"
-				],
-				"types": ["ColumnChart"],
-				"color": ["#4dd97a", "#0a85f4"],
+				"color": ["#D6D1B1"],
+				"types": ["DistrictChart", "ColumnChart"],
 				"unit": "間",
 				"map_filter": [
 					"dist",
@@ -4188,10 +4184,286 @@
 			"tags": [],
 			"contributors": ["tuic"]
 		},
-		"4002": {
-			"id": 4002,
-			"index": "4002",
-			"map_config": null,
+		"4001": {
+			"id": 4001,
+			"index": "4001",
+			"map_config": [
+				{
+					"index": "4001",
+					"paint": {
+						"fill-opacity": 0.5,
+						"fill-color": [
+							"case",
+							[
+								"<=",
+								[
+									"+",
+									["to-number", ["get", "0歲數量"]],
+									["to-number", ["get", "1歲數量"]],
+									["to-number", ["get", "2歲數量"]],
+									["to-number", ["get", "3歲數量"]],
+									["to-number", ["get", "4歲數量"]],
+									["to-number", ["get", "5歲數量"]]
+								],
+								50
+							],
+							"#0C303E",
+							[
+								"<=",
+								[
+									"+",
+									["to-number", ["get", "0歲數量"]],
+									["to-number", ["get", "1歲數量"]],
+									["to-number", ["get", "2歲數量"]],
+									["to-number", ["get", "3歲數量"]],
+									["to-number", ["get", "4歲數量"]],
+									["to-number", ["get", "5歲數量"]]
+								],
+								100
+							],
+							"#184556",
+							[
+								"<=",
+								[
+									"+",
+									["to-number", ["get", "0歲數量"]],
+									["to-number", ["get", "1歲數量"]],
+									["to-number", ["get", "2歲數量"]],
+									["to-number", ["get", "3歲數量"]],
+									["to-number", ["get", "4歲數量"]],
+									["to-number", ["get", "5歲數量"]]
+								],
+								150
+							],
+							"#1E4F63",
+							[
+								"<=",
+								[
+									"+",
+									["to-number", ["get", "0歲數量"]],
+									["to-number", ["get", "1歲數量"]],
+									["to-number", ["get", "2歲數量"]],
+									["to-number", ["get", "3歲數量"]],
+									["to-number", ["get", "4歲數量"]],
+									["to-number", ["get", "5歲數量"]]
+								],
+								200
+							],
+							"#24596F",
+							[
+								"<=",
+								[
+									"+",
+									["to-number", ["get", "0歲數量"]],
+									["to-number", ["get", "1歲數量"]],
+									["to-number", ["get", "2歲數量"]],
+									["to-number", ["get", "3歲數量"]],
+									["to-number", ["get", "4歲數量"]],
+									["to-number", ["get", "5歲數量"]]
+								],
+								250
+							],
+							"#2A647B",
+							[
+								"<=",
+								[
+									"+",
+									["to-number", ["get", "0歲數量"]],
+									["to-number", ["get", "1歲數量"]],
+									["to-number", ["get", "2歲數量"]],
+									["to-number", ["get", "3歲數量"]],
+									["to-number", ["get", "4歲數量"]],
+									["to-number", ["get", "5歲數量"]]
+								],
+								300
+							],
+							"#2F6E87",
+							[
+								"<=",
+								[
+									"+",
+									["to-number", ["get", "0歲數量"]],
+									["to-number", ["get", "1歲數量"]],
+									["to-number", ["get", "2歲數量"]],
+									["to-number", ["get", "3歲數量"]],
+									["to-number", ["get", "4歲數量"]],
+									["to-number", ["get", "5歲數量"]]
+								],
+								350
+							],
+							"#3B829F",
+							[
+								"<=",
+								[
+									"+",
+									["to-number", ["get", "0歲數量"]],
+									["to-number", ["get", "1歲數量"]],
+									["to-number", ["get", "2歲數量"]],
+									["to-number", ["get", "3歲數量"]],
+									["to-number", ["get", "4歲數量"]],
+									["to-number", ["get", "5歲數量"]]
+								],
+								400
+							],
+							"#4797B7",
+							[
+								"<=",
+								[
+									"+",
+									["to-number", ["get", "0歲數量"]],
+									["to-number", ["get", "1歲數量"]],
+									["to-number", ["get", "2歲數量"]],
+									["to-number", ["get", "3歲數量"]],
+									["to-number", ["get", "4歲數量"]],
+									["to-number", ["get", "5歲數量"]]
+								],
+								450
+							],
+							"#52ABCF",
+							[
+								"<=",
+								[
+									"+",
+									["to-number", ["get", "0歲數量"]],
+									["to-number", ["get", "1歲數量"]],
+									["to-number", ["get", "2歲數量"]],
+									["to-number", ["get", "3歲數量"]],
+									["to-number", ["get", "4歲數量"]],
+									["to-number", ["get", "5歲數量"]]
+								],
+								500
+							],
+							"#5EC0E7",
+							"#69D4FF"
+						]
+					},
+					"property": [
+						{
+							"key": "SECT_NAME",
+							"name": "行政區"
+						},
+						{
+							"key": "LIE_NAME",
+							"name": "里名"
+						},
+						{
+							"key": "0歲數量",
+							"name": "0歲人口數"
+						},
+						{
+							"key": "1歲數量",
+							"name": "1歲人口數"
+						},
+						{
+							"key": "2歲數量",
+							"name": "2歲人口數"
+						},
+						{
+							"key": "3歲數量",
+							"name": "3歲人口數"
+						},
+						{
+							"key": "4歲數量",
+							"name": "4歲人口數"
+						},
+						{
+							"key": "5歲數量",
+							"name": "5歲人口數"
+						}
+					],
+					"title": "各里幼兒人數",
+					"type": "fill"
+				}
+			],
+			"history_data": true,
+			"history_data_color": ["#4797B7", "#A3B4B9", "#FED0BB"],
+			"chart_config": {
+				"color": ["#4797B7"],
+				"types": ["DistrictChart", "ColumnChart"],
+				"unit": "人",
+				"map_filter": [
+					"dist",
+					[
+						"北投區",
+						"士林區",
+						"內湖區",
+						"南港區",
+						"松山區",
+						"信義區",
+						"中山區",
+						"大同區",
+						"中正區",
+						"萬華區",
+						"大安區",
+						"文山區"
+					]
+				]
+			},
+			"name": "幼兒統計",
+			"source": "民政局",
+			"time_from": "2023-10-01T00:00:00+08:00",
+			"time_to": null,
+			"update_freq": 1,
+			"update_freq_unit": "month",
+			"short_desc": "",
+			"long_desc": "客製化圖表類型: 橫向凹凸圖，箱形圖。此圖顯示各行政區幼兒人口年齡分布，箱形圖可提供總覽，橫向凹凸圖則可讓使用者自由篩選行政區進行比對。地圖則以里為單位進行劃分，支援各里篩選功能。較為政府機關或嬰幼兒服務提供者設計，每月更新一次。",
+			"use_case": "",
+			"links": null,
+			"tags": [],
+			"contributors": ["tuic"]
+		},
+		"4003": {
+			"id": 4003,
+			"index": "4003",
+			"map_config": [
+				{
+					"index": "4003",
+					"paint": {
+						"circle-color": "#FFC0CB",
+						"circle-radius": [
+							"interpolate",
+							["linear"],
+							["zoom"],
+							12,
+							3,
+							15,
+							5,
+							18,
+							7
+						]
+					},
+					"property": [
+						{
+							"key": "address",
+							"name": "地址"
+						},
+						{
+							"key": "name",
+							"name": "名稱"
+						},
+						{
+							"key": "services",
+							"name": "服務"
+						},
+						{
+							"key": "opening_hours",
+							"name": "開放時間"
+						},
+						{
+							"key": "guide",
+							"name": "指引"
+						},
+						{
+							"key": "reminder",
+							"name": "提醒"
+						}
+					],
+					"title": "哺集乳室資訊",
+					"type": "circle",
+					"size": "big",
+					"icon": null
+				}
+			],
 			"history_data": false,
 			"chart_config": {
 				"categories": [
@@ -4208,18 +4480,35 @@
 					"大安區",
 					"文山區"
 				],
-				"types": ["TreeChart"],
+				"types": ["NightingaleChart"],
 				"color": ["#4dd97a", "#0a85f4"],
-				"unit": ""
+				"unit": "",
+				"map_filter": [
+					"dist",
+					[
+						"北投區",
+						"士林區",
+						"內湖區",
+						"南港區",
+						"松山區",
+						"信義區",
+						"中山區",
+						"大同區",
+						"中正區",
+						"萬華區",
+						"大安區",
+						"文山區"
+					]
+				]
 			},
-			"name": "育兒補助",
+			"name": "哺集乳室資訊",
 			"source": "衛生局",
-			"time_from": "2023-11-18T00:00:00+08:00",
+			"time_from": "2023-03-02T00:00:00+08:00",
 			"time_to": null,
 			"update_freq": null,
 			"update_freq_unit": null,
 			"short_desc": "",
-			"long_desc": "客製化圖表類型: 樹狀圖。此圖列出台北市提供孕婦及嬰幼兒照護的相關補助措施，以嬰幼兒年齡做層級分類。不定期更新。",
+			"long_desc": "客製化圖表類型: 南丁格爾玫瑰圖。此圖顯示台北市各行政區的哺集乳室資訊。地圖採用新效果: 糖豆，其特定顏色代表該哺乳室提供特定設施。為育嬰期使用者設計，不定期更新。",
 			"use_case": "",
 			"links": null,
 			"tags": [],
@@ -4265,7 +4554,7 @@
 					"title": "空氣品質等值圖"
 				},
 				{
-					"index": "4005",
+					"index": "4006",
 					"paint": {
 						"circle-color": "#EEEEEE"
 					},
@@ -4297,7 +4586,7 @@
 			"update_freq": 1,
 			"update_freq_unit": "hour",
 			"short_desc": "",
-			"long_desc": "此圖顯示台北市各測站的一小時內平均PM10濃度。搭配新地圖類型: 等高線圖，顯示懸浮微粒濃度在區域上的分布。為懷孕期使用者及嬰幼兒設計，每小時更新一次。",
+			"long_desc": "此圖顯示台北市各測站的一小時內平均PM10濃度。搭配新地圖類型：等高線圖，顯示懸浮微粒濃度在區域上的分布。為懷孕期使用者及嬰幼兒設計，每小時更新一次。",
 			"use_case": "",
 			"links": null,
 			"tags": [],

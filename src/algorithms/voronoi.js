@@ -6,9 +6,7 @@ function findCenter(p1, p2, p3) {
 		2;
 
 	// how to deal with the case that d === 0? (points having same coordinates, falling on the same line...)
-	if (d === 0) {
-		console.log("Hello");
-	}
+
 	let x =
 		((p1.x ** 2 + p1.y ** 2) * (p2.y - p3.y) +
 			(p2.x ** 2 + p2.y ** 2) * (p3.y - p1.y) +
@@ -19,9 +17,6 @@ function findCenter(p1, p2, p3) {
 			(p2.x ** 2 + p2.y ** 2) * (p1.x - p3.x) +
 			(p3.x ** 2 + p3.y ** 2) * (p2.x - p1.x)) /
 		d;
-
-	if (isNaN(x) || isNaN(y)) {
-	}
 
 	let p = new Point(x, y);
 	return p;
@@ -153,7 +148,6 @@ class EdgeManager {
 
 		if (node === false) {
 			// the edge is not yet in the BST
-
 			newEdge.t1 = triangle;
 			newEdge.p1.lastLineConnected = newEdge;
 			newEdge.p2.lastLineConnected = newEdge;
@@ -161,15 +155,15 @@ class EdgeManager {
 			return newEdge;
 		} else {
 			// the edge is already in the BST
-
 			if (node.val.t1 === null) {
 				node.val.t1 = triangle;
 			} else if (node.val.t2 === null) {
 				node.val.t2 = triangle;
-			} else {
-				console.log("Both t1 and t2 are already assigned?");
-				console.log(node.val);
 			}
+			// else {
+			// 	console.log("Both t1 and t2 are already assigned?");
+			// 	console.log(node.val);
+			// }
 			return node.val;
 		}
 	}
@@ -221,9 +215,6 @@ class Edge {
 		this.t2 = null;
 
 		this.crossed = false;
-
-		// p1.lastLineConnected = this;
-		// p2.lastLineConnected = this;
 	}
 }
 
@@ -306,8 +297,6 @@ function BowyerWatson(points) {
 			triangulation.push(new Triangle(e.p1, e.p2, p));
 		});
 	});
-
-	return triangulation;
 }
 
 // function voronoiDFS(triangle) {
@@ -346,7 +335,7 @@ function findVoronoiCell(point) {
 		currentEdge.t2.center.toArray(),
 	];
 	let currentTriangle = currentEdge.t2;
-	while (true) {
+	while (currentTriangle.center !== firstPoint) {
 		let i = 0;
 		for (i = 0; i < 3; i++) {
 			if (
@@ -368,10 +357,6 @@ function findVoronoiCell(point) {
 		}
 
 		cellShape.push(currentTriangle.center.toArray());
-
-		if (currentTriangle.center === firstPoint) {
-			break;
-		}
 	}
 
 	return cellShape;
@@ -379,7 +364,8 @@ function findVoronoiCell(point) {
 
 export function voronoi(data) {
 	let points = data.map((pair) => new Point(pair[0], pair[1]));
-	let triangulation = BowyerWatson(points);
+
+	BowyerWatson(points);
 
 	let cells = points.map((p) => {
 		return findVoronoiCell(p);

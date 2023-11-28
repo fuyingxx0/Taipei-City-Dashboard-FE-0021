@@ -29,6 +29,10 @@ import { savedLocations } from "../assets/configs/mapbox/savedLocations.js";
 import { calculateGradientSteps } from "../assets/configs/mapbox/arcGradient";
 import MapPopup from "../components/map/MapPopup.vue";
 
+import { voronoi } from "../algorithms/voronoi.js";
+import { interpolation } from "../algorithms/contour_reciprocal.js";
+import { marchingSquare } from "../algorithms/marching_square.js";
+
 const { BASE_URL } = import.meta.env;
 
 export const useMapStore = defineStore("map", {
@@ -172,12 +176,24 @@ export const useMapStore = defineStore("map", {
 		},
 		// 3. Add the layer data as a source in mapbox
 		addMapLayerSource(map_config, data) {
-			this.map.addSource(`${map_config.layerId}-source`, {
-				type: "geojson",
-				data: { ...data },
-			});
+			if (
+				map_config.type !== "voronoi" &&
+				map_config.type !== "isoline"
+			) {
+				this.map.addSource(`${map_config.layerId}-source`, {
+					type: "geojson",
+					data: { ...data },
+				});
+			}
+
 			if (map_config.type === "arc") {
 				this.AddArcMapLayer(map_config, data);
+			} else if (map_config.type === "voronoi") {
+				this.AddVoronoiMapLayer(map_config, data);
+			} else if (map_config.type === "isoline") {
+				this.AddIsolineMapLayer(map_config, data);
+			} else if (map_config.type === "contour") {
+				//
 			} else {
 				this.addMapLayer(map_config);
 			}
@@ -326,6 +342,156 @@ export const useMapStore = defineStore("map", {
 					(el) => el !== map_config.layerId
 				);
 			}, delay);
+		},
+
+		AddVoronoiMapLayer(map_config, data) {
+			// Feed data into Voronoi algorithm
+			let seenKeys = [];
+
+			let voronoi_source = {
+				type: data.type,
+				crs: data.crs,
+				features: [],
+			};
+
+			// iterate through all data
+			data.features.forEach((location) => {
+				let key = location.properties[map_config.filter_key];
+
+				// found new category
+				if (!seenKeys.includes(key)) {
+					seenKeys.push(key);
+
+					// get all the data within the category
+					let cat1 = data.features.filter((item) => {
+						return item.properties[map_config.filter_key] === key;
+					});
+
+					// remove duplicate coordinates (so that it wont't cause problems in the Voronoi algorithm...)
+					cat1 = cat1.filter((val, ind) => {
+						return (
+							cat1.findIndex((item) => {
+								return (
+									item.geometry.coordinates[0] ===
+										val.geometry.coordinates[0] &&
+									item.geometry.coordinates[1] ===
+										val.geometry.coordinates[1]
+								);
+							}) === ind
+						);
+					});
+
+					// get coordnates alone
+					let cat2 = cat1.map((item) => {
+						return item.geometry.coordinates;
+					});
+
+					// calculate cell for each coordinate
+					let cells = voronoi(cat2);
+
+					// push to source data (cells)
+					for (let i = 0; i < cells.length; i++) {
+						voronoi_source.features.push({
+							type: cat1[i].type,
+							properties: cat1[i].properties,
+							geometry: {
+								type: "LineString",
+								coordinates: cells[i],
+							},
+						});
+					}
+				}
+			});
+
+			this.map.addSource(`${map_config.layerId}-source`, {
+				type: "geojson",
+				data: { ...voronoi_source },
+			});
+
+			let new_map_config = { ...map_config };
+			new_map_config.type = "line";
+			this.addMapLayer(new_map_config);
+		},
+
+		AddIsolineMapLayer(map_config, data) {
+			let dataPoints = data.features.map((item) => {
+				return {
+					x: item.geometry.coordinates[0],
+					y: item.geometry.coordinates[1],
+					value: item.properties.value,
+				};
+			});
+
+			let targetPoints = [];
+			let gridSize = 0.001;
+
+			let rowN = 0;
+			let columnN = 0;
+			for (let i = 24.946791; i <= 25.2181139; i += gridSize, rowN += 1) {
+				columnN = 0;
+				for (
+					let j = 121.4395508;
+					j <= 121.6735101;
+					j += gridSize, columnN += 1
+				) {
+					targetPoints.push({ x: j, y: i });
+				}
+			}
+
+			let interpolationResult = interpolation(dataPoints, targetPoints);
+
+			let discreteData = [];
+			for (let y = 0; y < rowN; y++) {
+				discreteData.push([]);
+				for (let x = 0; x < columnN; x++) {
+					discreteData[y].push(interpolationResult[y * columnN + x]);
+				}
+			}
+
+			let isoline_data = {
+				type: "FeatureCollection",
+				crs: {
+					type: "name",
+					properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
+				},
+				features: [],
+			};
+
+			let squareMatrix = [];
+			let allLines = [];
+
+			for (let i = 40; i <= 75.01; i += 2) {
+				allLines = [];
+				squareMatrix = [];
+				marchingSquare(
+					squareMatrix,
+					discreteData,
+					allLines,
+					i,
+					gridSize
+				);
+
+				isoline_data.features = isoline_data.features.concat(
+					allLines.map((line) => {
+						return {
+							type: "Feature",
+							properties: { value: i },
+							geometry: { type: "LineString", coordinates: line },
+						};
+					})
+				);
+			}
+
+			this.map.addSource(`${map_config.layerId}-source`, {
+				type: "geojson",
+
+				data: { ...isoline_data },
+			});
+
+			let new_map_config = map_config;
+			new_map_config.type = "line";
+
+			this.addMapLayer(new_map_config);
 		},
 		//  5. Turn on the visibility for a exisiting map layer
 		turnOnMapLayerVisibility(mapLayerId) {

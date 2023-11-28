@@ -4382,7 +4382,7 @@
 				"types": ["DistrictChart", "ColumnChart"],
 				"unit": "人",
 				"map_filter": [
-					"dist",
+					"SECT_NAME",
 					[
 						"北投區",
 						"士林區",

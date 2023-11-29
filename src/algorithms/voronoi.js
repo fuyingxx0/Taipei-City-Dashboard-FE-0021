@@ -1,50 +1,5 @@
-let pointID = 0;
-
-function findCenter(p1, p2, p3) {
-	let d =
-		(p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y)) *
-		2;
-
-	// how to deal with the case that d === 0? (points having same coordinates, falling on the same line...)
-
-	let x =
-		((p1.x ** 2 + p1.y ** 2) * (p2.y - p3.y) +
-			(p2.x ** 2 + p2.y ** 2) * (p3.y - p1.y) +
-			(p3.x ** 2 + p3.y ** 2) * (p1.y - p2.y)) /
-		d;
-	let y =
-		((p1.x ** 2 + p1.y ** 2) * (p3.x - p2.x) +
-			(p2.x ** 2 + p2.y ** 2) * (p1.x - p3.x) +
-			(p3.x ** 2 + p3.y ** 2) * (p2.x - p1.x)) /
-		d;
-
-	let p = new Point(x, y);
-	return p;
-}
-
-function compareEdges(e1, e2) {
-	// 0: e1 > e2
-	// 1: e1 = e2
-	// 2: e1 < e2
-	// compare p1 (the point with smaller id) first
-	// this function is used to decide the position of an edge in the BST
-
-	if (e1.p1.id > e2.p1.id) {
-		return 0;
-	}
-	if (e1.p1.id < e2.p1.id) {
-		return 2;
-	}
-	if (e1.p2.id > e2.p2.id) {
-		return 0;
-	}
-	if (e1.p2.id < e2.p2.id) {
-		return 2;
-	}
-	return 1;
-}
-
-class BT_Node {
+// Node for the binary search tree
+class BSTNode {
 	constructor(val) {
 		this.val = val;
 		this.left = null;
@@ -52,13 +7,15 @@ class BT_Node {
 	}
 }
 
+// A binary search tree is implemented to store and find all edges efficiently (hopefully)
+// Implementation reference: https://arsenekuo.com/post/2021/12/13/implementation-of-bst-in-javascript
 class BinarySearchTree {
 	constructor() {
 		this.root = null;
 	}
 
 	insert(val) {
-		const newNode = new BT_Node(val);
+		const newNode = new BSTNode(val);
 		if (!this.root) {
 			this.root = newNode;
 			return this;
@@ -137,11 +94,15 @@ class BinarySearchTree {
 	}
 }
 
+// EdgeManager uses a binary search tree to manage all edges
 class EdgeManager {
 	constructor() {
 		this.tree = new BinarySearchTree();
 	}
 
+	// When a triangle is initialized, it calls this function to check whether its edges are already in the BST.
+	// If so, make a new reference from the edge to the triangle.
+	// If not, insert the new edge and make a reference from the edge to the triangle.
 	assignEdge(p1, p2, triangle) {
 		let newEdge = new Edge(p1, p2);
 		let node = this.tree.find(newEdge);
@@ -149,8 +110,8 @@ class EdgeManager {
 		if (node === false) {
 			// the edge is not yet in the BST
 			newEdge.t1 = triangle;
-			newEdge.p1.lastLineConnected = newEdge;
-			newEdge.p2.lastLineConnected = newEdge;
+			newEdge.p1.lastEdgeConnected = newEdge;
+			newEdge.p2.lastEdgeConnected = newEdge;
 			this.tree.insert(newEdge);
 			return newEdge;
 		} else {
@@ -161,13 +122,14 @@ class EdgeManager {
 				node.val.t2 = triangle;
 			}
 			// else {
-			// 	console.log("Both t1 and t2 are already assigned?");
-			// 	console.log(node.val);
+			// 	console.log("Both t1 and t2 are already assigned? Probably a bug.");
 			// }
 			return node.val;
 		}
 	}
 
+	// When a triangle is removed from the triangulation,
+	// edge manager finds its three edges and remove their reference to it.
 	removeTriangle(triangle) {
 		for (let i = 0; i < 3; i++) {
 			let node = this.tree.find(triangle.edges[i]);
@@ -197,33 +159,42 @@ class Triangle {
 		this.radius2 = this.center.distance2(p1); // radius of the circumcircle
 	}
 
+	// Check whether a point is in the triangle's circumcircle
 	circumcircleContains(p) {
 		return this.center.distance2(p) < this.radius2;
 	}
 }
 
 class Edge {
-	constructor(p1, p2) {
-		if (p1.id <= p2.id) {
-			this.p1 = p1;
-			this.p2 = p2;
+	constructor(pa, pb) {
+		// p1 always has smaller ID
+		if (pa.id <= pb.id) {
+			this.p1 = pa;
+			this.p2 = pb;
 		} else {
-			this.p1 = p2;
-			this.p2 = p1;
+			this.p1 = pb;
+			this.p2 = pa;
 		}
+
+		// Reference to two neighboring triangles
 		this.t1 = null;
 		this.t2 = null;
-
-		this.crossed = false;
 	}
 }
 
+let pointID = 0;
+
 class Point {
 	constructor(x, y) {
+		// Each point has a unique ID for comparison
 		this.id = pointID;
+
 		this.x = x;
 		this.y = y;
-		this.lastLineConnected = null;
+
+		// Reference to the last edge connected to this point
+		this.lastEdgeConnected = null;
+
 		pointID += 1;
 	}
 
@@ -238,6 +209,50 @@ class Point {
 	toArray() {
 		return [this.x, this.y];
 	}
+}
+
+// Input: p1, p2, p3: three points from a triangle
+// Output: A new point at the circumcenter of the triangle
+function findCenter(p1, p2, p3) {
+	let d = p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y);
+
+	// Note: When two points have the same coordinates, d === 0.
+	//       This case has been avoided with AddVoronoiMapLayer() in mapStore.js.
+
+	let x =
+		(p1.x ** 2 + p1.y ** 2) * (p2.y - p3.y) +
+		(p2.x ** 2 + p2.y ** 2) * (p3.y - p1.y) +
+		(p3.x ** 2 + p3.y ** 2) * (p1.y - p2.y);
+	let y =
+		(p1.x ** 2 + p1.y ** 2) * (p3.x - p2.x) +
+		(p2.x ** 2 + p2.y ** 2) * (p1.x - p3.x) +
+		(p3.x ** 2 + p3.y ** 2) * (p2.x - p1.x);
+
+	let p = new Point(x / d / 2, y / d / 2);
+	return p;
+}
+
+// This function defines an order for the edges, which is used to determine the position of an edge in the BST.
+// Output:
+// 0: e1 > e2
+// 1: e1 = e2
+// 2: e1 < e2
+function compareEdges(e1, e2) {
+	// Compare p1 (the point with smaller ID) first.
+	if (e1.p1.id > e2.p1.id) {
+		return 0;
+	}
+	if (e1.p1.id < e2.p1.id) {
+		return 2;
+	}
+	// Then compare p2.
+	if (e1.p2.id > e2.p2.id) {
+		return 0;
+	}
+	if (e1.p2.id < e2.p2.id) {
+		return 2;
+	}
+	return 1;
 }
 
 function BowyerWatson(points) {
@@ -299,27 +314,8 @@ function BowyerWatson(points) {
 	});
 }
 
-// function voronoiDFS(triangle) {
-// 	for (let i = 0; i < 3; i++) {
-// 		let neighbor =
-// 			triangle.edges[i].t1 === triangle
-// 				? triangle.edges[i].t2
-// 				: triangle.edges[i].t1;
-// 		if (neighbor !== null && !triangle.edges[i].crossed) {
-// 			line(
-// 				triangle.center.x,
-// 				triangle.center.y,
-// 				neighbor.center.x,
-// 				neighbor.center.y
-// 			);
-// 			triangle.edges[i].crossed = true;
-// 			voronoiDFS(neighbor);
-// 		}
-// 	}
-// }
-
 function findVoronoiCell(point) {
-	let currentEdge = point.lastLineConnected;
+	let currentEdge = point.lastEdgeConnected;
 
 	if (
 		currentEdge === null ||
@@ -362,8 +358,29 @@ function findVoronoiCell(point) {
 	return cellShape;
 }
 
+// Voronoi algorithm: An algorithm that generates Voronoi diagram from a set of points.
+//
+// It first finds the Delaunay triangulation for the input points, and then connects
+// every circumcenter in the triangulation to obtain the Voronoi diagram.
+//
+// Please refer to the following links for details:
+// https://www.baeldung.com/cs/voronoi-diagram
+// https://www.gorillasun.de/blog/bowyer-watson-algorithm-for-delaunay-triangulation/
+//
+// Note: In theory, the complexity of this algorithm is O(n^2), which can be improved upon,
+//       by either good optimization or switching to Fortune's algorithm (https://en.wikipedia.org/wiki/Fortune%27s_algorithm)
+//
+// Input:
+// - data: A 2D array storing the coordinates of each point.
+//         [[x1, y1], [x2, y2]...]
+//
+// Output:
+// A 3D array storing the outlines of each Voronoi cell, ordered the same way as the input data.
+// [[[x1, y1], [x2, y2]...],
+//  [[x1, y1], [x2, y2]...]...]
+
 export function voronoi(data) {
-	let points = data.map((pair) => new Point(pair[0], pair[1]));
+	let points = data.map((coord) => new Point(coord[0], coord[1]));
 
 	BowyerWatson(points);
 

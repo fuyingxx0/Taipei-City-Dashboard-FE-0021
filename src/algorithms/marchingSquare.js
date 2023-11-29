@@ -1,10 +1,11 @@
-// Marching Square algorithm: an algorithm that generates contours (isolines) for a two-dimensional scalar field.
+// Marching Square algorithm: An algorithm that generates contours (isolines) for a two-dimensional scalar field.
+//
 // Please refer to the following link for details:
 // https://en.wikipedia.org/wiki/Marching_squares
 //
 // Input:
-// - discreteData: a 2D array storing values on a grid
-// - isoValue: the value to draw the isoline on
+// - discreteData: A 2D array storing values on a grid
+// - isoValue: The value to draw the isoline on
 //
 // Output:
 // An array of isoline segments in the format of

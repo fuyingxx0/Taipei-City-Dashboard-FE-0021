@@ -351,30 +351,35 @@ export const useMapStore = defineStore("map", {
 				features: [],
 			};
 
-			// get coordnates alone
-			let coords = data.features.map(
+			// Get features alone
+			let { features } = data;
+
+			// Get coordnates alone
+			let coords = features.map(
 				(location) => location.geometry.coordinates
 			);
 
-			// remove duplicate coordinates (so that they wont't cause problems in the Voronoi algorithm...)
-			coords = coords.filter((coord1, ind) => {
+			// Remove duplicate coordinates (so that they wont't cause problems in the Voronoi algorithm...)
+			let shouldBeRemoved = coords.map((coord1, ind) => {
 				return (
 					coords.findIndex((coord2) => {
 						return (
 							coord2[0] === coord1[0] && coord2[1] === coord1[1]
 						);
-					}) === ind
+					}) !== ind
 				);
 			});
 
-			// calculate cell for each coordinate
+			features = features.filter((_, ind) => !shouldBeRemoved[ind]);
+			coords = coords.filter((_, ind) => !shouldBeRemoved[ind]);
+
+			// Calculate cell for each coordinate
 			let cells = voronoi(coords);
 
-			// push to source data (cells)
+			// Push cell outlines to source data
 			for (let i = 0; i < cells.length; i++) {
 				voronoi_source.features.push({
-					type: data.features[i].type,
-					properties: data.features[i].properties,
+					...features[i],
 					geometry: {
 						type: "LineString",
 						coordinates: cells[i],
@@ -382,6 +387,7 @@ export const useMapStore = defineStore("map", {
 				});
 			}
 
+			// Add source and layer
 			this.map.addSource(`${map_config.layerId}-source`, {
 				type: "geojson",
 				data: { ...voronoi_source },

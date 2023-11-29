@@ -2,9 +2,8 @@
 // https://en.wikipedia.org/wiki/Marching_squares
 //
 // Input:
-// discreteData: A 2D array storing values on a grid
-// isoValue: the value to draw the isoline on
-// gridSize: size of each grid
+// - discreteData: a 2D array storing values on a grid
+// - isoValue: the value to draw the isoline on
 //
 // Output:
 // An array of isoline segments in the format of
@@ -13,180 +12,128 @@
 // 	[ [x1, y1], [x2, y2] ]...
 // ]
 
-// Note: in this function, the y coordinate increases downwards.
-
-export function marchingSquare(
-	discreteData,
-	isoValue,
-	lngStart,
-	latStart,
-	gridSize
-) {
+export function marchingSquare(discreteData, isoValue) {
 	let columnN = discreteData[0].length;
 	let rowN = discreteData.length;
-	let squareMatrix = [];
 	let result = [];
 
-	for (let i = 0; i < rowN - 1; i++) {
-		squareMatrix.push([]);
-		for (let j = 0; j < columnN - 1; j++) {
+	//  discreteData:
+	//
+	//  ┌> latitude increases
+	//
+	//  │        │        │        │
+	//  ├────────┼────────┼────────┼─
+	//  │ [2][0] │ [2][1] │ [2][2] │
+	//  ├────────┼────────┼────────┼─
+	//  │ [1][0] │ [1][1] │ [1][2] │
+	//  ├────────┼────────┼────────┼─
+	//  │ [0][0] │ [0][1] │ [0][2] │
+	//  └────────┴────────┴────────┴─ -> longitude increases
+
+	for (let row = 0; row < rowN - 1; row++) {
+		for (let col = 0; col < columnN - 1; col++) {
 			// Drawing isoline for the following square surrounded by four discreteData values:
-			//   (i,j) ┌ ─ ┐ (i+1,j)
-			//         │   │
-			// (i,j+1) └ ─ ┘ (i+1,j+1)
+			//
+			// [row+1][col] ┌────┐ [row+1][col+1]
+			//              │    │
+			//   [row][col] └────┘ [row][col+1]
+			//
+			// How each side is numbered:
+			//
+			// ┌─ 0 ─┐
+			// 3     1
+			// └─ 2 ─┘
 
-			// Initialize the square
-			squareMatrix[i].push(new Square(j, i));
-
-			// Store corner values
-			squareMatrix[i][j].cornerValue = [
-				discreteData[i + 1][j],
-				discreteData[i + 1][j + 1],
-				discreteData[i][j + 1],
-				discreteData[i][j],
+			// Step 0: Store corner values
+			let cornerValues = [
+				discreteData[row + 1][col],
+				discreteData[row + 1][col + 1],
+				discreteData[row][col + 1],
+				discreteData[row][col],
 			];
 
-			// Compare the corner values to the iso-value to make a binary representaion.
-			squareMatrix[i][j].getCornerBinary(isoValue);
+			// Step 1: Compare the corner values to the iso-value to make a binary representaion.
+			let cornerBinary = cornerValues.map((val) => {
+				return val > isoValue ? 1 : 0;
+			});
 
-			// Look up the binary representaion in basicLineTable to determine an isoline pattern.
-			squareMatrix[i][j].getBasicLines(isoValue);
+			// Step 2: Look up the binary representaion in basicLineTable to determine a line pattern.
+			let sum = 0;
+			cornerBinary.forEach((val, ind) => {
+				sum += val * 2 ** ind;
+			});
+			let linePattern = linePatternTable[sum];
 
-			// Use corner values and linear interpolation to get more precise isoline segments with
-			// actual coordinates, and then push those segments into result.
-			squareMatrix[i][j].getActualLines(
-				result,
-				lngStart,
-				latStart,
-				gridSize,
-				isoValue
-			);
+			// - Consider saddle points
+			if (sum === 5) {
+				if (cornerValues.reduce((a, b) => a + b) / 4 >= isoValue) {
+					linePattern = [
+						[0, 3],
+						[1, 2],
+					];
+				} else {
+					linePattern = [
+						[0, 1],
+						[2, 3],
+					];
+				}
+			} else if (sum === 10) {
+				if (cornerValues.reduce((a, b) => a + b) / 4 >= isoValue) {
+					linePattern = [
+						[0, 1],
+						[2, 3],
+					];
+				} else {
+					linePattern = [
+						[0, 3],
+						[1, 2],
+					];
+				}
+			}
+
+			// Step 3: Use linear interpolation to get more precise isoline segments then push those segments into result.
+
+			// - Calculate the linear interpolation values for each side.
+			let interpoValues = [];
+			for (let k = 0; k < 4; k++) {
+				let interpolate_tmp = linearInterpolation(
+					cornerValues[k],
+					cornerValues[(k + 1) % 4],
+					isoValue
+				);
+				interpoValues.push(interpolate_tmp);
+			}
+
+			// - Flip the interpolation values for side 1 and side 2.
+			interpoValues[1] = 1 - interpoValues[1];
+			interpoValues[2] = 1 - interpoValues[2];
+
+			// - Turn line patterns into actual coordinates.
+			let colrow = [col, row];
+			linePattern.forEach((line) => {
+				let endPoint0 = lineEndPoints[line[0]].map((code, ind) => {
+					if (code === 0.5) {
+						return colrow[ind] + interpoValues[line[0]];
+					}
+					return colrow[ind] + code;
+				});
+
+				let endPoint1 = lineEndPoints[line[1]].map((code, ind) => {
+					if (code === 0.5) {
+						return colrow[ind] + interpoValues[line[1]];
+					}
+					return colrow[ind] + code;
+				});
+
+				result.push([endPoint0, endPoint1]);
+			});
 		}
 	}
 
 	return result;
 }
 
-class Square {
-	constructor(column, row) {
-		this.column = column;
-		this.row = row;
-		this.cornerValue = null;
-		this.cornerBinary = null;
-		this.basicLines = [];
-	}
-
-	getCornerBinary(isoValue) {
-		if (this.cornerValue === null) {
-			return;
-		}
-		this.cornerBinary = this.cornerValue.map((val) => {
-			return val > isoValue ? 1 : 0;
-		});
-	}
-
-	getBasicLines(isoValue) {
-		if (this.cornerBinary === null) {
-			return;
-		}
-
-		// Look up the binary representaion in basicLineTable to determine an isoline pattern.
-		let sum = 0;
-		this.cornerBinary.forEach((val, ind) => {
-			sum += val * 2 ** ind;
-		});
-		this.basicLines = basicLineTable[sum];
-
-		// Consider saddle points
-		if (sum === 5) {
-			if (this.cornerValue.reduce((a, b) => a + b) / 4 >= isoValue) {
-				this.basicLines = [
-					[0, 3],
-					[1, 2],
-				];
-			} else {
-				this.basicLines = [
-					[0, 1],
-					[2, 3],
-				];
-			}
-		} else if (sum === 10) {
-			if (this.cornerValue.reduce((a, b) => a + b) / 4 >= isoValue) {
-				this.basicLines = [
-					[0, 1],
-					[2, 3],
-				];
-			} else {
-				this.basicLines = [
-					[0, 3],
-					[1, 2],
-				];
-			}
-		}
-	}
-
-	getActualLines(result, lngStart, latStart, length, isoValue) {
-		// Calculate the linear interpolation values for each side.
-		// Note: how each side is ordered:
-		// ┌ 2 ┐
-		// 3   1
-		// └ 0 ┘
-		let interpoValues = [];
-		for (let k = 0; k < 4; k++) {
-			let interpolate_tmp = linearInterpolation(
-				this.cornerValue[k],
-				this.cornerValue[(k + 1) % 4],
-				isoValue
-			);
-			interpoValues.push(interpolate_tmp);
-		}
-
-		// Flip the interpolation values for side 1 and side 2.
-		interpoValues[1] = 1 - interpoValues[1];
-		interpoValues[2] = 1 - interpoValues[2];
-
-		// Turn basic lines into actual lines with coordinates.
-		this.basicLines.forEach((l) => {
-			let newLine = [
-				[
-					lngStart +
-						(this.column +
-							lineEndPoints[l[0]][0] +
-							(l[0] === 0 || l[0] === 2
-								? interpoValues[l[0]]
-								: 0.5)) *
-							length,
-					latStart +
-						(this.row +
-							lineEndPoints[l[0]][1] +
-							(l[0] === 1 || l[0] === 3
-								? interpoValues[l[0]]
-								: 0.5)) *
-							length,
-				],
-				[
-					lngStart +
-						(this.column +
-							lineEndPoints[l[1]][0] +
-							(l[1] === 0 || l[1] === 2
-								? interpoValues[l[1]]
-								: 0.5)) *
-							length,
-					latStart +
-						(this.row +
-							lineEndPoints[l[1]][1] +
-							(l[1] === 1 || l[1] === 3
-								? interpoValues[l[1]]
-								: 0.5)) *
-							length,
-				],
-			];
-			result.push(newLine);
-		});
-	}
-}
-
-let basicLineTable = [
+let linePatternTable = [
 	[],
 	[[0, 3]],
 	[[0, 1]],

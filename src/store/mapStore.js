@@ -431,16 +431,12 @@ export const useMapStore = defineStore("map", {
 			let targetPoints = [];
 			let gridSize = 0.001;
 			let rowN = 0;
-			let columnN = 0;
+			let colN = 0;
 
 			// generate target points
 			for (let i = latStart; i <= latEnd; i += gridSize, rowN += 1) {
-				columnN = 0;
-				for (
-					let j = lngStart;
-					j <= lngEnd;
-					j += gridSize, columnN += 1
-				) {
+				colN = 0;
+				for (let j = lngStart; j <= lngEnd; j += gridSize, colN += 1) {
 					targetPoints.push({ x: j, y: i });
 				}
 			}
@@ -452,8 +448,8 @@ export const useMapStore = defineStore("map", {
 			let discreteData = [];
 			for (let y = 0; y < rowN; y++) {
 				discreteData.push([]);
-				for (let x = 0; x < columnN; x++) {
-					discreteData[y].push(interpolationResult[y * columnN + x]);
+				for (let x = 0; x < colN; x++) {
+					discreteData[y].push(interpolationResult[y * colN + x]);
 				}
 			}
 
@@ -468,20 +464,24 @@ export const useMapStore = defineStore("map", {
 			};
 
 			// repeat the marching square algorithm for differnt iso-values (40, 42, 44 ... 74 in this case)
-			for (let i = 40; i <= 75; i += 2) {
-				let result = marchingSquare(
-					discreteData,
-					i,
-					lngStart,
-					latStart,
-					gridSize
-				);
+			for (let isoValue = 40; isoValue <= 75; isoValue += 2) {
+				let result = marchingSquare(discreteData, isoValue);
+
+				let transformedResult = result.map((line) => {
+					return line.map((point) => {
+						return [
+							point[0] * gridSize + lngStart,
+							point[1] * gridSize + latStart,
+						];
+					});
+				});
+
 				isoline_data.features = isoline_data.features.concat(
 					// turn result into geojson format
-					result.map((line) => {
+					transformedResult.map((line) => {
 						return {
 							type: "Feature",
-							properties: { value: i },
+							properties: { value: isoValue },
 							geometry: { type: "LineString", coordinates: line },
 						};
 					})

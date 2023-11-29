@@ -4551,6 +4551,7 @@
 						}
 					],
 					"type": "isoline",
+					"isoline-key": "value",
 					"title": "空氣品質等值圖"
 				},
 				{

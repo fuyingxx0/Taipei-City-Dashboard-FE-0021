@@ -1,4 +1,5 @@
 // Marching Square algorithm: an algorithm that generates contours (isolines) for a two-dimensional scalar field.
+// Please refer to the following link for details:
 // https://en.wikipedia.org/wiki/Marching_squares
 //
 // Input:
@@ -23,11 +24,11 @@ export function marchingSquare(discreteData, isoValue) {
 	//
 	//  │        │        │        │
 	//  ├────────┼────────┼────────┼─
-	//  │ [2][0] │ [2][1] │ [2][2] │
+	// -> [2][0]-> [2][1]-> [2][2]->
 	//  ├────────┼────────┼────────┼─
-	//  │ [1][0] │ [1][1] │ [1][2] │
+	// -> [1][0]-> [1][1]-> [1][2]->
 	//  ├────────┼────────┼────────┼─
-	//  │ [0][0] │ [0][1] │ [0][2] │
+	//  │ [0][0]-> [0][1]-> [0][2]->
 	//  └────────┴────────┴────────┴─ -> longitude increases
 
 	for (let row = 0; row < rowN - 1; row++) {
@@ -44,7 +45,7 @@ export function marchingSquare(discreteData, isoValue) {
 			// 3     1
 			// └─ 2 ─┘
 
-			// Step 0: Store corner values
+			// Step 1: Store corner values
 			let cornerValues = [
 				discreteData[row + 1][col],
 				discreteData[row + 1][col + 1],
@@ -52,12 +53,12 @@ export function marchingSquare(discreteData, isoValue) {
 				discreteData[row][col],
 			];
 
-			// Step 1: Compare the corner values to the iso-value to make a binary representaion.
+			// Step 2: Compare the corner values to the iso-value to make a binary representaion.
 			let cornerBinary = cornerValues.map((val) => {
 				return val > isoValue ? 1 : 0;
 			});
 
-			// Step 2: Look up the binary representaion in basicLineTable to determine a line pattern.
+			// Step 3: Look up the binary representaion in basicLineTable to determine a line pattern.
 			let sum = 0;
 			cornerBinary.forEach((val, ind) => {
 				sum += val * 2 ** ind;
@@ -91,7 +92,8 @@ export function marchingSquare(discreteData, isoValue) {
 				}
 			}
 
-			// Step 3: Use linear interpolation to get more precise isoline segments then push those segments into result.
+			// Step 4: Use linear interpolation to get more precise isoline segments,
+			// and then push those segments into result.
 
 			// - Calculate the linear interpolation values for each side.
 			let interpoValues = [];
@@ -158,6 +160,8 @@ let linePatternTable = [
 	[],
 ];
 
+// End point coordinates
+// - A value of 0.5 means the exact value is determined by linear interpolation
 let lineEndPoints = [
 	[0.5, 1],
 	[1, 0.5],

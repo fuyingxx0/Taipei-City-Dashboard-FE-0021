@@ -345,63 +345,42 @@ export const useMapStore = defineStore("map", {
 		},
 
 		AddVoronoiMapLayer(map_config, data) {
-			// Feed data into Voronoi algorithm
-			let seenKeys = [];
-
 			let voronoi_source = {
 				type: data.type,
 				crs: data.crs,
 				features: [],
 			};
 
-			// iterate through all data
-			data.features.forEach((location) => {
-				let key = location.properties[map_config.filter_key];
+			// get coordnates alone
+			let coords = data.features.map(
+				(location) => location.geometry.coordinates
+			);
 
-				// found new category
-				if (!seenKeys.includes(key)) {
-					seenKeys.push(key);
-
-					// get all the data within the category
-					let cat1 = data.features.filter((item) => {
-						return item.properties[map_config.filter_key] === key;
-					});
-
-					// remove duplicate coordinates (so that it wont't cause problems in the Voronoi algorithm...)
-					cat1 = cat1.filter((val, ind) => {
+			// remove duplicate coordinates (so that they wont't cause problems in the Voronoi algorithm...)
+			coords = coords.filter((coord1, ind) => {
+				return (
+					coords.findIndex((coord2) => {
 						return (
-							cat1.findIndex((item) => {
-								return (
-									item.geometry.coordinates[0] ===
-										val.geometry.coordinates[0] &&
-									item.geometry.coordinates[1] ===
-										val.geometry.coordinates[1]
-								);
-							}) === ind
+							coord2[0] === coord1[0] && coord2[1] === coord1[1]
 						);
-					});
-
-					// get coordnates alone
-					let cat2 = cat1.map((item) => {
-						return item.geometry.coordinates;
-					});
-
-					// calculate cell for each coordinate
-					let cells = voronoi(cat2);
-
-					// push to source data (cells)
-					for (let i = 0; i < cells.length; i++) {
-						voronoi_source.features.push({
-							type: cat1[i].type,
-							properties: cat1[i].properties,
-							geometry: {
-								type: "LineString",
-								coordinates: cells[i],
-							},
-						});
-					}
-				}
+					}) === ind
+				);
 			});
+
+			// calculate cell for each coordinate
+			let cells = voronoi(coords);
+
+			// push to source data (cells)
+			for (let i = 0; i < cells.length; i++) {
+				voronoi_source.features.push({
+					type: data.features[i].type,
+					properties: data.features[i].properties,
+					geometry: {
+						type: "LineString",
+						coordinates: cells[i],
+					},
+				});
+			}
 
 			this.map.addSource(`${map_config.layerId}-source`, {
 				type: "geojson",
@@ -414,12 +393,13 @@ export const useMapStore = defineStore("map", {
 		},
 
 		AddIsolineMapLayer(map_config, data) {
-			// turn the original data into the format that can be accepted by interpolation()
+			// Step 1: Generate a 2D scalar field from known data points
+			// - Turn the original data into the format that can be accepted by interpolation()
 			let dataPoints = data.features.map((item) => {
 				return {
 					x: item.geometry.coordinates[0],
 					y: item.geometry.coordinates[1],
-					value: item.properties.value,
+					value: item.properties[map_config["isoline-key"]],
 				};
 			});
 
@@ -433,7 +413,7 @@ export const useMapStore = defineStore("map", {
 			let rowN = 0;
 			let colN = 0;
 
-			// generate target points
+			// - Generate target point coordinates
 			for (let i = latStart; i <= latEnd; i += gridSize, rowN += 1) {
 				colN = 0;
 				for (let j = lngStart; j <= lngEnd; j += gridSize, colN += 1) {
@@ -441,10 +421,11 @@ export const useMapStore = defineStore("map", {
 				}
 			}
 
-			// get target points interpolation result
+			// - Get target points interpolation result
 			let interpolationResult = interpolation(dataPoints, targetPoints);
 
-			// turn the result into the format that can be accepted by marchingSquare()
+			// Step 2: Calculate isolines from the 2D scalar field
+			// - Turn the interpolation result into the format that can be accepted by marchingSquare()
 			let discreteData = [];
 			for (let y = 0; y < rowN; y++) {
 				discreteData.push([]);
@@ -453,7 +434,7 @@ export const useMapStore = defineStore("map", {
 				}
 			}
 
-			// initialize geojson data
+			// - Initialize geojson data
 			let isoline_data = {
 				type: "FeatureCollection",
 				crs: {
@@ -463,7 +444,7 @@ export const useMapStore = defineStore("map", {
 				features: [],
 			};
 
-			// repeat the marching square algorithm for differnt iso-values (40, 42, 44 ... 74 in this case)
+			// - Repeat the marching square algorithm for differnt iso-values (40, 42, 44 ... 74 in this case)
 			for (let isoValue = 40; isoValue <= 75; isoValue += 2) {
 				let result = marchingSquare(discreteData, isoValue);
 
@@ -477,7 +458,7 @@ export const useMapStore = defineStore("map", {
 				});
 
 				isoline_data.features = isoline_data.features.concat(
-					// turn result into geojson format
+					// Turn result into geojson format
 					transformedResult.map((line) => {
 						return {
 							type: "Feature",
@@ -488,6 +469,7 @@ export const useMapStore = defineStore("map", {
 				);
 			}
 
+			// Step 3: Add source and layer
 			this.map.addSource(`${map_config.layerId}-source`, {
 				type: "geojson",
 

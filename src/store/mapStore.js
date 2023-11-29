@@ -30,8 +30,8 @@ import { calculateGradientSteps } from "../assets/configs/mapbox/arcGradient";
 import MapPopup from "../components/map/MapPopup.vue";
 
 import { voronoi } from "../algorithms/voronoi.js";
-import { interpolation } from "../algorithms/contour_reciprocal.js";
-import { marchingSquare } from "../algorithms/marching_square.js";
+import { interpolation } from "../algorithms/contourReciprocal.js";
+import { marchingSquare } from "../algorithms/marchingSquare.js";
 
 const { BASE_URL } = import.meta.env;
 
@@ -414,6 +414,7 @@ export const useMapStore = defineStore("map", {
 		},
 
 		AddIsolineMapLayer(map_config, data) {
+			// turn the original data into the format that can be accepted by interpolation()
 			let dataPoints = data.features.map((item) => {
 				return {
 					x: item.geometry.coordinates[0],
@@ -422,24 +423,32 @@ export const useMapStore = defineStore("map", {
 				};
 			});
 
+			let lngStart = 121.42955;
+			let lngEnd = 121.68351;
+			let latStart = 24.94679;
+			let latEnd = 25.21811;
+
 			let targetPoints = [];
 			let gridSize = 0.001;
-
 			let rowN = 0;
 			let columnN = 0;
-			for (let i = 24.946791; i <= 25.2181139; i += gridSize, rowN += 1) {
+
+			// generate target points
+			for (let i = latStart; i <= latEnd; i += gridSize, rowN += 1) {
 				columnN = 0;
 				for (
-					let j = 121.4395508;
-					j <= 121.6735101;
+					let j = lngStart;
+					j <= lngEnd;
 					j += gridSize, columnN += 1
 				) {
 					targetPoints.push({ x: j, y: i });
 				}
 			}
 
+			// get target points interpolation result
 			let interpolationResult = interpolation(dataPoints, targetPoints);
 
+			// turn the result into the format that can be accepted by marchingSquare()
 			let discreteData = [];
 			for (let y = 0; y < rowN; y++) {
 				discreteData.push([]);
@@ -448,6 +457,7 @@ export const useMapStore = defineStore("map", {
 				}
 			}
 
+			// initialize geojson data
 			let isoline_data = {
 				type: "FeatureCollection",
 				crs: {
@@ -457,22 +467,18 @@ export const useMapStore = defineStore("map", {
 				features: [],
 			};
 
-			let squareMatrix = [];
-			let allLines = [];
-
-			for (let i = 40; i <= 75.01; i += 2) {
-				allLines = [];
-				squareMatrix = [];
-				marchingSquare(
-					squareMatrix,
+			// repeat the marching square algorithm for differnt iso-values (40, 42, 44 ... 74 in this case)
+			for (let i = 40; i <= 75; i += 2) {
+				let result = marchingSquare(
 					discreteData,
-					allLines,
 					i,
+					lngStart,
+					latStart,
 					gridSize
 				);
-
 				isoline_data.features = isoline_data.features.concat(
-					allLines.map((line) => {
+					// turn result into geojson format
+					result.map((line) => {
 						return {
 							type: "Feature",
 							properties: { value: i },
@@ -488,9 +494,7 @@ export const useMapStore = defineStore("map", {
 				data: { ...isoline_data },
 			});
 
-			let new_map_config = map_config;
-			new_map_config.type = "line";
-
+			let new_map_config = { ...map_config, type: "line" };
 			this.addMapLayer(new_map_config);
 		},
 		//  5. Turn on the visibility for a exisiting map layer

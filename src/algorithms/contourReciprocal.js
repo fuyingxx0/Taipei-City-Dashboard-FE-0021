@@ -1,5 +1,18 @@
+// This function estimates the values at target points based on the values at nearby data points,
+// taking into account the distances between them. The weighted average ensures that closer data
+// points have a stronger influence on the interpolated value.
+
+// Input:
+// 1. dataPoints
+// An array that contains n objects in the format of {x, y, value}
+// 2. targetPoints
+// An array that contains m objects in the format of {x, y}
+//
+// Output:
+// 1. answers
+// An array that contains m values, representing the predicted value on each of the target points.
+
 export function interpolation(dataPoints, targetPoints) {
-	// [{x:1,y:2,value:3}]
 	const pointCount = dataPoints.length;
 	let answers = [];
 	for (let k = 0; k < targetPoints.length; k++) {

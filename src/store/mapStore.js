@@ -30,7 +30,7 @@ import { calculateGradientSteps } from "../assets/configs/mapbox/arcGradient";
 import MapPopup from "../components/map/MapPopup.vue";
 
 import { voronoi } from "../algorithms/voronoi.js";
-import { interpolation } from "../algorithms/contourReciprocal.js";
+import { interpolation } from "../algorithms/interpolation.js";
 import { marchingSquare } from "../algorithms/marchingSquare.js";
 
 const { BASE_URL } = import.meta.env;

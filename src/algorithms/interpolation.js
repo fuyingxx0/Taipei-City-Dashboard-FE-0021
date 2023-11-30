@@ -10,7 +10,7 @@
 //
 // Output:
 // 1. answers
-// An array that contains m values, representing the predicted value on each of the target points.
+// An array that contains m values, representing the predicted value on each of the target coordinates.
 
 export function interpolation(dataPoints, targetPoints) {
 	const pointCount = dataPoints.length;

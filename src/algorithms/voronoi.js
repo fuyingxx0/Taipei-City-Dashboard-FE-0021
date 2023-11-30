@@ -255,8 +255,12 @@ function compareEdges(e1, e2) {
 	return 1;
 }
 
+// Input: An array of Point
+// Effect:
+// - determine lastEdgeConnected of each point
+// - determine the relationship between edges and triangles
 function BowyerWatson(points) {
-	// covers all of Taipei
+	// Make two huge triangles that cover all of Taipei
 	let cornerPoints = [
 		new Point(121.1, 25.272604303072),
 		new Point(122, 25.272604303072),
@@ -277,9 +281,9 @@ function BowyerWatson(points) {
 	let triangulation = [superTriangle1, superTriangle2];
 
 	points.forEach((p) => {
-		// empty edge list
 		let affectedEdges = [];
 
+		// Remove all triangles whose circumcircle overlaps with the point, and collect all affected edges.
 		triangulation = triangulation.filter((t) => {
 			if (t.circumcircleContains(p)) {
 				edgeManager.removeTriangle(t);
@@ -289,6 +293,7 @@ function BowyerWatson(points) {
 			return true;
 		});
 
+		// Find all unique edges in the affected edges
 		let uniqueEdges = [];
 
 		for (var i = 0; i < affectedEdges.length; ++i) {
@@ -308,12 +313,16 @@ function BowyerWatson(points) {
 			}
 		}
 
+		// Form new triangles by connecting each unique edge to the point
 		uniqueEdges.forEach((e) => {
 			triangulation.push(new Triangle(e.p1, e.p2, p));
 		});
 	});
 }
 
+// Input: A Point
+// Output: A 2D array representing the Voronoi cell that contains the point
+// [[x1, y1], [x2, y2]...]
 function findVoronoiCell(point) {
 	let currentEdge = point.lastEdgeConnected;
 
@@ -326,11 +335,14 @@ function findVoronoiCell(point) {
 	}
 
 	let firstPoint = currentEdge.t1.center;
-	let cellShape = [
+	let cellPath = [
 		currentEdge.t1.center.toArray(),
 		currentEdge.t2.center.toArray(),
 	];
 	let currentTriangle = currentEdge.t2;
+
+	// Go through each edge connected to the point and each triangle surrounding the point
+	// to get the outline of the cell.
 	while (currentTriangle.center !== firstPoint) {
 		let i = 0;
 		for (i = 0; i < 3; i++) {
@@ -352,10 +364,10 @@ function findVoronoiCell(point) {
 			return null;
 		}
 
-		cellShape.push(currentTriangle.center.toArray());
+		cellPath.push(currentTriangle.center.toArray());
 	}
 
-	return cellShape;
+	return cellPath;
 }
 
 // Voronoi algorithm: An algorithm that generates Voronoi diagram from a set of points.

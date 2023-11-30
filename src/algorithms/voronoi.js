@@ -324,8 +324,20 @@ function BowyerWatson(points) {
 // Output: A 2D array representing the Voronoi cell that contains the point
 // [[x1, y1], [x2, y2]...]
 function findVoronoiCell(point) {
-	let currentEdge = point.lastEdgeConnected;
+	// Assume PQ is the lastEdgeConnected of P, the algorithm goes from triangle 0 to 5
+	// and push each of their circumcenter coordinates into cellPath.
+	//
+	//    Q -------
+	//   / \  1  / \
+	//  /   \   /   \
+	// /  0  \ /  2  \
+	// ------ P ------
+	// \  5  / \  3  /
+	//  \   /   \   /
+	//   \ /  4  \ /
+	//    ---------
 
+	let currentEdge = point.lastEdgeConnected;
 	if (
 		currentEdge === null ||
 		currentEdge.t1 === null ||
@@ -341,8 +353,7 @@ function findVoronoiCell(point) {
 	];
 	let currentTriangle = currentEdge.t2;
 
-	// Go through each edge connected to the point and each triangle surrounding the point
-	// to get the outline of the cell.
+	// Go through (1) each edge connected to the point and (2) each triangle surrounding the point.
 	while (currentTriangle.center !== firstPoint) {
 		let i = 0;
 		for (i = 0; i < 3; i++) {

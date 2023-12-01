@@ -190,10 +190,8 @@ function calcSector(a, r) {
 	// console.log(a, r, maxDataInR)
 	let rend =
 		aHovered.value === a
-			? (showedData.value[a].data[r].value / maxDataInR) * rselected +
-			  rmin
-			: (showedData.value[a].data[r].value / showedMax.value) * rmax +
-			  rmin;
+			? (showedData.value[a].data[r].value / maxDataInR) * rselected + rmin
+			: (showedData.value[a].data[r].value / showedMax.value) * rmax + rmin;
 	for (let i = 0; i < props.series.length; i++) {
 		if (props.series[i].name === showedData.value[a].data[r].r) {
 			if (!rShow.value[i]) {

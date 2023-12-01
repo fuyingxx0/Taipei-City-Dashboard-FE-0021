@@ -164,8 +164,8 @@ let linePatternTable = [
 // End point coordinates
 // - A value of 0.5 means the exact value is determined by linear interpolation
 let lineEndPoints = [
-	[0.5, 1],
-	[1, 0.5],
+	[0.5, 1], // End point coordinate on side 0
+	[1, 0.5], // End point coordinate on side 1...
 	[0.5, 0],
 	[0, 0.5],
 ];

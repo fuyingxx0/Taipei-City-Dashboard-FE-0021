@@ -4078,12 +4078,12 @@
 			],
 			"contributors": ["tuic"]
 		},
-		"4000": {
-			"id": 4000,
-			"index": "4000",
+		"153": {
+			"id": 153,
+			"index": "gynecology_clinic",
 			"map_config": [
 				{
-					"index": "4000",
+					"index": "gynecology_clinic",
 					"paint": {
 						"circle-color": [
 							"match",
@@ -4121,10 +4121,10 @@
 						}
 					],
 					"type": "circle",
-					"title": "婦產科診所與醫院"
+					"title": "婦產科診所與醫院分佈"
 				},
 				{
-					"index": "4000",
+					"index": "gynecology_clinic",
 					"paint": {
 						"line-color": "#D6D1B1",
 						"line-opacity": 0.6,
@@ -4145,7 +4145,7 @@
 						}
 					],
 					"type": "voronoi",
-					"title": "婦產科診所與醫院"
+					"title": "婦產科診所與醫院分佈"
 				}
 			],
 			"history_data": false,
@@ -4171,7 +4171,7 @@
 					]
 				]
 			},
-			"name": "婦產科診所與醫院統計",
+			"name": "婦產科診所與醫院分佈",
 			"source": "衛生局",
 			"time_from": "2023-07-26T10:48:26+08:00",
 			"time_to": null,
@@ -4184,12 +4184,12 @@
 			"tags": [],
 			"contributors": ["tuic"]
 		},
-		"4001": {
-			"id": 4001,
-			"index": "4001",
+		"154": {
+			"id": 154,
+			"index": "newborn_stats",
 			"map_config": [
 				{
-					"index": "4001",
+					"index": "newborn_stats",
 					"paint": {
 						"fill-opacity": 0.5,
 						"fill-color": [
@@ -4399,7 +4399,7 @@
 					]
 				]
 			},
-			"name": "幼兒統計",
+			"name": "幼兒人數統計",
 			"source": "民政局",
 			"time_from": "2023-10-01T00:00:00+08:00",
 			"time_to": null,
@@ -4412,12 +4412,12 @@
 			"tags": [],
 			"contributors": ["tuic"]
 		},
-		"4003": {
-			"id": 4003,
-			"index": "4003",
+		"155": {
+			"id": 155,
+			"index": "breastfeeding_room",
 			"map_config": [
 				{
-					"index": "4003",
+					"index": "breastfeeding_room",
 					"paint": {
 						"circle-color": "#FFC0CB",
 						"circle-radius": [
@@ -4458,7 +4458,7 @@
 							"name": "提醒"
 						}
 					],
-					"title": "哺集乳室資訊",
+					"title": "哺集乳室分佈",
 					"type": "circle",
 					"size": "big",
 					"icon": null
@@ -4501,7 +4501,7 @@
 					]
 				]
 			},
-			"name": "哺集乳室資訊",
+			"name": "哺集乳室分佈",
 			"source": "衛生局",
 			"time_from": "2023-03-02T00:00:00+08:00",
 			"time_to": null,
@@ -4514,12 +4514,12 @@
 			"tags": [],
 			"contributors": ["tuic"]
 		},
-		"4006": {
-			"id": 4006,
-			"index": "4006",
+		"160": {
+			"id": 160,
+			"index": "pm10_measurments",
 			"map_config": [
 				{
-					"index": "4006",
+					"index": "pm10_measurments",
 					"paint": {
 						"line-color": [
 							"case",
@@ -4552,10 +4552,10 @@
 					],
 					"type": "isoline",
 					"isoline-key": "value",
-					"title": "空氣品質等值圖"
+					"title": "懸浮微粒量測值等值線"
 				},
 				{
-					"index": "4006",
+					"index": "pm10_measurments",
 					"paint": {
 						"circle-color": "#EEEEEE"
 					},
@@ -4571,7 +4571,7 @@
 					],
 					"type": "circle",
 					"size": "big",
-					"title": "空氣品質等值圖"
+					"title": "測站懸浮微粒量測值"
 				}
 			],
 			"history_data": false,
@@ -4580,7 +4580,7 @@
 				"types": ["RadarChart", "BarChart"],
 				"unit": "μg/m³"
 			},
-			"name": "臺北市 PM10 測量數據",
+			"name": "懸浮微粒量測值",
 			"source": "環保局",
 			"time_from": "2023-11-18T20:00:00+08:00",
 			"time_to": null,

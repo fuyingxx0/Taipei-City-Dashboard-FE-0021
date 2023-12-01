@@ -29,9 +29,9 @@ import { savedLocations } from "../assets/configs/mapbox/savedLocations.js";
 import { calculateGradientSteps } from "../assets/configs/mapbox/arcGradient";
 import MapPopup from "../components/map/MapPopup.vue";
 
-import { voronoi } from "../algorithms/voronoi.js";
-import { interpolation } from "../algorithms/interpolation.js";
-import { marchingSquare } from "../algorithms/marchingSquare.js";
+import { voronoi } from "../assets/utilityFunctions/voronoi.js";
+import { interpolation } from "../assets/utilityFunctions/interpolation.js";
+import { marchingSquare } from "../assets/utilityFunctions/marchingSquare.js";
 
 const { BASE_URL } = import.meta.env;
 

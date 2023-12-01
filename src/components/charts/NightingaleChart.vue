@@ -191,9 +191,9 @@ function calcSector(a, r) {
 	let rend =
 		aHovered.value === a
 			? (showedData.value[a].data[r].value / maxDataInR) * rselected +
-				rmin
+			  rmin
 			: (showedData.value[a].data[r].value / showedMax.value) * rmax +
-				rmin;
+			  rmin;
 	for (let i = 0; i < props.series.length; i++) {
 		if (props.series[i].name === showedData.value[a].data[r].r) {
 			if (!rShow.value[i]) {
@@ -267,7 +267,7 @@ const tooltipPosition = computed(() => {
 
 <template>
 	<!-- conditionally render the chart -->
-	<div v-if="activeChart === 'NightingaleChart'" class="nigntingalechart">
+	<div v-if="activeChart === 'NightingaleChart'" class="nightingalechart">
 		<!-- The layout of the chart Vue component -->
 		<!-- Utilize the @click event listener to enable map filtering by data selection -->
 		<div class="textwrapper">
@@ -334,7 +334,7 @@ const tooltipPosition = computed(() => {
 			<!-- The class "chart-tooltip" could be edited in /assets/styles/chartStyles.css -->
 			<div
 				v-if="aHovered !== -1"
-				class="nigntingalechart-chart-info chart-tooltip"
+				class="nightingalechart-chart-info chart-tooltip"
 				:style="tooltipPosition"
 			>
 				<h6>{{ categories[aHovered] }}</h6>
@@ -348,7 +348,7 @@ const tooltipPosition = computed(() => {
 </template>
 
 <style scoped lang="scss">
-.nigntingalechart {
+.nightingalechart {
 	/* styles for the chart Vue component */
 	overflow: scroll;
 	display: flex;

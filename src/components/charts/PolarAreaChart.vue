@@ -265,7 +265,7 @@ const tooltipPosition = computed(() => {
 
 <template>
 	<!-- conditionally render the chart -->
-	<div v-if="activeChart === 'NightingaleChart'" class="nightingalechart">
+	<div v-if="activeChart === 'PolarAreaChart'" class="polarareachart">
 		<!-- The layout of the chart Vue component -->
 		<!-- Utilize the @click event listener to enable map filtering by data selection -->
 		<div class="textwrapper">
@@ -332,7 +332,7 @@ const tooltipPosition = computed(() => {
 			<!-- The class "chart-tooltip" could be edited in /assets/styles/chartStyles.css -->
 			<div
 				v-if="aHovered !== -1"
-				class="nightingalechart-chart-info chart-tooltip"
+				class="polarareachart-chart-info chart-tooltip"
 				:style="tooltipPosition"
 			>
 				<h6>{{ categories[aHovered] }}</h6>
@@ -346,7 +346,7 @@ const tooltipPosition = computed(() => {
 </template>
 
 <style scoped lang="scss">
-.nightingalechart {
+.polarareachart {
 	/* styles for the chart Vue component */
 	overflow: scroll;
 	display: flex;

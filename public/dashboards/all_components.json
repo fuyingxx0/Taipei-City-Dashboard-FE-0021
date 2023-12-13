@@ -4178,8 +4178,8 @@
 			"update_freq": null,
 			"update_freq_unit": null,
 			"short_desc": "",
-			"long_desc": "此圖顯示各行政區婦產科診所及醫院總和個數。搭配地圖類型：Vonoroi diagram，顯示各地點距離最近的就診地，支援各區篩選功能，為懷孕期使用者設計。不定期更新。",
-			"use_case": "",
+			"long_desc": "此圖顯示各行政區婦產科診所及醫院總和個數。搭配地圖類型：Vonoroi diagram，顯示各地點距離最近的就診地，支援各區篩選功能。不定期更新。",
+			"use_case": "此圖為懷孕期使用者設計，透過地圖增加民眾使用上的便利性。",
 			"links": null,
 			"tags": [],
 			"contributors": ["tuic"]
@@ -4406,8 +4406,8 @@
 			"update_freq": 1,
 			"update_freq_unit": "month",
 			"short_desc": "",
-			"long_desc": "此圖顯示各行政區幼兒人口年齡分布，地圖則以里為單位進行劃分，支援各里篩選功能，為政府機關或嬰幼兒服務提供者設計。每月更新一次。",
-			"use_case": "",
+			"long_desc": "此圖顯示各行政區幼兒人口年齡分布，地圖則以里為單位進行劃分，支援各里篩選功能。每月更新一次。",
+			"use_case": "此圖為政府機關或嬰幼兒服務提供者設計，可以做為政策方針的參考。",
 			"links": null,
 			"tags": [],
 			"contributors": ["tuic"]
@@ -4480,7 +4480,7 @@
 					"大安區",
 					"文山區"
 				],
-				"types": ["NightingaleChart"],
+				"types": ["PolarAreaChart"],
 				"color": ["#4dd97a", "#0a85f4"],
 				"unit": "",
 				"map_filter": [
@@ -4508,8 +4508,8 @@
 			"update_freq": null,
 			"update_freq_unit": null,
 			"short_desc": "",
-			"long_desc": "圖表類型: 南丁格爾玫瑰圖。此圖顯示台北市各行政區的哺集乳室資訊，地圖則標示出哺集乳室的具體位置指引以及提供的設施，為育嬰期使用者設計。不定期更新。",
-			"use_case": "",
+			"long_desc": "此圖顯示台北市各行政區的哺集乳室資訊，地圖則標示出哺集乳室的具體位置指引以及提供的設施，為育嬰期使用者設計。不定期更新。",
+			"use_case": "透過此圖，能夠清晰地看到每個行政區中哺集乳室相關設施的分佈情況，以及各項相關設施的數量。",
 			"links": null,
 			"tags": [],
 			"contributors": ["tuic"]
@@ -4587,8 +4587,8 @@
 			"update_freq": 1,
 			"update_freq_unit": "hour",
 			"short_desc": "",
-			"long_desc": "此圖顯示台北市各測站的一小時內平均PM10濃度，搭配地圖類型：等高線圖，顯示懸浮微粒濃度在區域上的分布，為懷孕期使用者及嬰幼兒設計。每小時更新一次。",
-			"use_case": "",
+			"long_desc": "此圖顯示台北市各測站的一小時內平均PM10濃度，搭配地圖類型：等高線圖，顯示懸浮微粒濃度在區域上的分布。每小時更新一次。",
+			"use_case": "此圖表可供民眾參考，特別是懷孕期使用者及嬰幼兒，作為評估是否外出的依據。",
 			"links": null,
 			"tags": [],
 			"contributors": ["tuic"]
